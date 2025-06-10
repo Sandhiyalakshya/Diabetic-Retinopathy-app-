@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Analysis Result - DR Detection System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Analysis Result</h3>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <img src="{{ url_for('uploaded_file', filename=result.image_path) }}" 
+                         alt="Retinal Image" 
+                         class="img-fluid rounded mb-3" 
+                         style="max-height: 300px;">
+                </div>
+                
+                <div class="mb-4">
+                    <h4>Prediction: <span class="badge {% if result.prediction == 'No DR' %}bg-success
+                                                     {% elif result.prediction == 'Mild DR' %}bg-info
+                                                     {% elif result.prediction == 'Moderate DR' %}bg-warning
+                                                     {% elif result.prediction == 'Severe DR' %}bg-danger
+                                                     {% else %}bg-dark{% endif %} fs-6">
+                        {{ result.prediction }}
+                    </span></h4>
+                    <p class="text-muted">Confidence Score: {{ "%.2f"|format(result.confidence * 100) }}%</p>
+                </div>
+                
+                <div class="progress mb-4" style="height: 25px;">
+                    <div class="progress-bar {% if result.prediction == 'No DR' %}bg-success
+                                          {% elif result.prediction == 'Mild DR' %}bg-info
+                                          {% elif result.prediction == 'Moderate DR' %}bg-warning
+                                          {% elif result.prediction == 'Severe DR' %}bg-danger
+                                          {% else %}bg-dark{% endif %}" 
+                         role="progressbar" 
+                         style="width: {{ result.confidence * 100 }}%" 
+                         aria-valuenow="{{ result.confidence * 100 }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        {{ "%.1f"|format(result.confidence * 100) }}%
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <h5 class="alert-heading">What does this mean?</h5>
+                    {% if result.prediction == "No DR" %}
+                        <p>No signs of diabetic retinopathy detected. Continue regular eye examinations.</p>
+                    {% elif result.prediction == "Mild DR" %}
+                        <p>Mild diabetic retinopathy detected. Consult with an eye care professional for monitoring.</p>
+                    {% elif result.prediction == "Moderate DR" %}
+                        <p>Moderate diabetic retinopathy detected. Seek professional medical evaluation soon.</p>
+                    {% elif result.prediction == "Severe DR" %}
+                        <p>Severe diabetic retinopathy detected. Immediate medical attention recommended.</p>
+                    {% elif result.prediction == "Proliferative DR" %}
+                        <p>Proliferative diabetic retinopathy detected. Urgent medical care required.</p>
+                    {% endif %}
+                </div>
+
+                <div class="alert alert-warning">
+                    <strong>Important:</strong> This analysis is for screening purposes only. 
+                    Please consult with a qualified healthcare professional for proper diagnosis and treatment.
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="{{ url_for('upload') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-2"></i>Upload Another Image
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-history me-2"></i>View History
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
